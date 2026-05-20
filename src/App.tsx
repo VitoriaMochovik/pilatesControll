@@ -258,6 +258,18 @@ export const App: React.FC = () => {
                   </button>
                 </div>
 
+                {showPatientForm && (
+                  <PatientForm
+                    initialData={editingPatient || undefined}
+                    onSubmit={editingPatient ? handleUpdatePatient : handleAddPatient}
+                    isLoading={isLoading}
+                    onCancel={() => {
+                      setShowPatientForm(false);
+                      setEditingPatient(null);
+                    }}
+                  />
+                )}
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="bg-white rounded-lg shadow p-6 text-center">
                     <p className="text-gray-600 text-sm font-medium">Total de Alunos</p>
@@ -339,18 +351,6 @@ export const App: React.FC = () => {
                     </button>
                   </div>
                 </div>
-
-                {showPatientForm && (
-                  <PatientForm
-                    initialData={editingPatient || undefined}
-                    onSubmit={editingPatient ? handleUpdatePatient : handleAddPatient}
-                    isLoading={isLoading}
-                    onCancel={() => {
-                      setShowPatientForm(false);
-                      setEditingPatient(null);
-                    }}
-                  />
-                )}
 
                 <PatientList
                   patients={patients}
