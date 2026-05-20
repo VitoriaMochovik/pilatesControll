@@ -93,7 +93,9 @@ export const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await patientsService.getAllPatients();
+      if (!currentUser) throw new Error('Usuário não autenticado');
+      // 🔒 Filter patients by current professor
+      const data = await patientsService.getAllPatientsByProfessor(currentUser.id);
       setPatients(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar alunos');
@@ -105,7 +107,11 @@ export const App: React.FC = () => {
   const handleAddPatient = async (input: CreatePatientInput) => {
     setIsLoading(true);
     try {
-      await patientsService.createPatient(input);
+      if (!currentUser) throw new Error('Usuário não autenticado');
+      // Create the patient
+      const newPatient = await patientsService.createPatient(input);
+      // Associate with current professor
+      await patientsService.associateStudentToProfessor(newPatient.id, currentUser.id);
       setShowPatientForm(false);
       await loadPatients();
     } catch (err) {

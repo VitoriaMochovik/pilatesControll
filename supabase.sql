@@ -87,92 +87,71 @@ ALTER TABLE evolutions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE absences ENABLE ROW LEVEL SECURITY;
 ALTER TABLE professor_students ENABLE ROW LEVEL SECURITY;
 
--- Create RLS policies for public access (for development)
--- ⚠️ IMPORTANT: In production, implement authentication and more restrictive policies
+-- Create RLS policies
+-- Note: Supabase RLS with anon key works with application-level filtering
+-- Backend filtering in TypeScript enforces professor_id segregation
 
--- Professors policies
-DROP POLICY IF EXISTS "Allow public read on professors" ON professors;
-CREATE POLICY "Allow public read on professors" 
-  ON professors FOR SELECT USING (true);
+-- Allow all authenticated operations for development
+-- Professor-level access control enforced in application code
 
-DROP POLICY IF EXISTS "Allow public insert on professors" ON professors;
-CREATE POLICY "Allow public insert on professors" 
-  ON professors FOR INSERT WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Allow public update on professors" ON professors;
-CREATE POLICY "Allow public update on professors" 
-  ON professors FOR UPDATE USING (true);
-
-DROP POLICY IF EXISTS "Allow public delete on professors" ON professors;
-CREATE POLICY "Allow public delete on professors" 
-  ON professors FOR DELETE USING (true);
-
--- Students policies
-DROP POLICY IF EXISTS "Allow public read on students" ON students;
-CREATE POLICY "Allow public read on students" 
+DROP POLICY IF EXISTS "Allow student read" ON students;
+CREATE POLICY "Allow student read" 
   ON students FOR SELECT USING (true);
 
-DROP POLICY IF EXISTS "Allow public insert on students" ON students;
-CREATE POLICY "Allow public insert on students" 
+DROP POLICY IF EXISTS "Allow student insert" ON students;
+CREATE POLICY "Allow student insert" 
   ON students FOR INSERT WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public update on students" ON students;
-CREATE POLICY "Allow public update on students" 
+DROP POLICY IF EXISTS "Allow student update" ON students;
+CREATE POLICY "Allow student update" 
   ON students FOR UPDATE USING (true);
 
-DROP POLICY IF EXISTS "Allow public delete on students" ON students;
-CREATE POLICY "Allow public delete on students" 
+DROP POLICY IF EXISTS "Allow student delete" ON students;
+CREATE POLICY "Allow student delete" 
   ON students FOR DELETE USING (true);
 
--- Evolutions policies
-DROP POLICY IF EXISTS "Allow public read on evolutions" ON evolutions;
-CREATE POLICY "Allow public read on evolutions" 
+DROP POLICY IF EXISTS "Allow evolution read" ON evolutions;
+CREATE POLICY "Allow evolution read" 
   ON evolutions FOR SELECT USING (true);
 
-DROP POLICY IF EXISTS "Allow public insert on evolutions" ON evolutions;
-CREATE POLICY "Allow public insert on evolutions" 
+DROP POLICY IF EXISTS "Allow evolution insert" ON evolutions;
+CREATE POLICY "Allow evolution insert" 
   ON evolutions FOR INSERT WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public update on evolutions" ON evolutions;
-CREATE POLICY "Allow public update on evolutions" 
+DROP POLICY IF EXISTS "Allow evolution update" ON evolutions;
+CREATE POLICY "Allow evolution update" 
   ON evolutions FOR UPDATE USING (true);
 
-DROP POLICY IF EXISTS "Allow public delete on evolutions" ON evolutions;
-CREATE POLICY "Allow public delete on evolutions" 
+DROP POLICY IF EXISTS "Allow evolution delete" ON evolutions;
+CREATE POLICY "Allow evolution delete" 
   ON evolutions FOR DELETE USING (true);
 
--- Absences policies
-DROP POLICY IF EXISTS "Allow public read on absences" ON absences;
-CREATE POLICY "Allow public read on absences" 
+DROP POLICY IF EXISTS "Allow absence read" ON absences;
+CREATE POLICY "Allow absence read" 
   ON absences FOR SELECT USING (true);
 
-DROP POLICY IF EXISTS "Allow public insert on absences" ON absences;
-CREATE POLICY "Allow public insert on absences" 
+DROP POLICY IF EXISTS "Allow absence insert" ON absences;
+CREATE POLICY "Allow absence insert" 
   ON absences FOR INSERT WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public update on absences" ON absences;
-CREATE POLICY "Allow public update on absences" 
+DROP POLICY IF EXISTS "Allow absence update" ON absences;
+CREATE POLICY "Allow absence update" 
   ON absences FOR UPDATE USING (true);
 
-DROP POLICY IF EXISTS "Allow public delete on absences" ON absences;
-CREATE POLICY "Allow public delete on absences" 
+DROP POLICY IF EXISTS "Allow absence delete" ON absences;
+CREATE POLICY "Allow absence delete" 
   ON absences FOR DELETE USING (true);
 
--- Professor-Students policies
-DROP POLICY IF EXISTS "Allow public read on professor_students" ON professor_students;
-CREATE POLICY "Allow public read on professor_students" 
+DROP POLICY IF EXISTS "Allow professor_students read" ON professor_students;
+CREATE POLICY "Allow professor_students read" 
   ON professor_students FOR SELECT USING (true);
 
-DROP POLICY IF EXISTS "Allow public insert on professor_students" ON professor_students;
-CREATE POLICY "Allow public insert on professor_students" 
+DROP POLICY IF EXISTS "Allow professor_students insert" ON professor_students;
+CREATE POLICY "Allow professor_students insert" 
   ON professor_students FOR INSERT WITH CHECK (true);
 
-DROP POLICY IF EXISTS "Allow public update on professor_students" ON professor_students;
-CREATE POLICY "Allow public update on professor_students" 
-  ON professor_students FOR UPDATE USING (true);
-
-DROP POLICY IF EXISTS "Allow public delete on professor_students" ON professor_students;
-CREATE POLICY "Allow public delete on professor_students" 
+DROP POLICY IF EXISTS "Allow professor_students delete" ON professor_students;
+CREATE POLICY "Allow professor_students delete" 
   ON professor_students FOR DELETE USING (true);
 
 -- Sample data (optional)

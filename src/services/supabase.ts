@@ -13,6 +13,7 @@ export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKe
 // ==================== PACIENTES ====================
 export const patientsService = {
   async getAllPatients(): Promise<Patient[]> {
+    console.warn('⚠️ getAllPatients() chamado sem filtro de professor - use getAllPatientsByProfessor()');
     const { data, error } = await supabase
       .from('students')
       .select('*')
@@ -20,6 +21,29 @@ export const patientsService = {
 
     if (error) throw new Error(`Erro ao buscar pacientes: ${error.message}`);
     return data || [];
+  },
+
+  async getAllPatientsByProfessor(professorId: string): Promise<Patient[]> {
+    // 1. Get all student IDs associated with this professor
+    const { data: associations, error: assocError } = await supabase
+      .from('professor_students')
+      .select('student_id')
+      .eq('professor_id', professorId);
+
+    if (assocError) throw new Error(`Erro ao buscar alunos do professor: ${assocError.message}`);
+    
+    const studentIds = (associations || []).map(a => a.student_id);
+    if (studentIds.length === 0) return [];
+
+    // 2. Get the actual student data
+    const { data: students, error: studentsError } = await supabase
+      .from('students')
+      .select('*')
+      .in('id', studentIds)
+      .order('name', { ascending: true });
+
+    if (studentsError) throw new Error(`Erro ao buscar dados dos alunos: ${studentsError.message}`);
+    return students || [];
   },
 
   async getPatientById(id: string): Promise<Patient | null> {
@@ -47,6 +71,17 @@ export const patientsService = {
 
     if (error) throw new Error(`Erro ao criar paciente: ${error.message}`);
     return data;
+  },
+
+  async associateStudentToProfessor(studentId: string, professorId: string): Promise<void> {
+    const { error } = await supabase
+      .from('professor_students')
+      .insert([{
+        student_id: studentId,
+        professor_id: professorId,
+      }]);
+
+    if (error) throw new Error(`Erro ao associar aluno ao professor: ${error.message}`);
   },
 
   async updatePatient(id: string, updates: Partial<Patient>): Promise<Patient> {
@@ -85,13 +120,26 @@ export const patientsService = {
     return this.updatePatient(id, { active: true });
   },
 
-  async getOverduePatients(): Promise<OverduePatient[]> {
+  async getOverduePatients(professorId: string): Promise<OverduePatient[]> {
     const today = new Date();
     const currentDay = today.getDate();
 
+    // 1. Get all student IDs associated with this professor
+    const { data: associations, error: assocError } = await supabase
+      .from('professor_students')
+      .select('student_id')
+      .eq('professor_id', professorId);
+
+    if (assocError) throw new Error(`Erro ao buscar alunos do professor: ${assocError.message}`);
+    
+    const studentIds = (associations || []).map(a => a.student_id);
+    if (studentIds.length === 0) return [];
+
+    // 2. Get unpaid students
     const { data, error } = await supabase
       .from('students')
       .select('*')
+      .in('id', studentIds)
       .eq('paid_this_month', false);
 
     if (error) throw new Error(`Erro ao buscar pacientes inadimplentes: ${error.message}`);
