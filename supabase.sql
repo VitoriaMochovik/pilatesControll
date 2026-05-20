@@ -94,6 +94,22 @@ ALTER TABLE professor_students ENABLE ROW LEVEL SECURITY;
 -- Allow all authenticated operations for development
 -- Professor-level access control enforced in application code
 
+DROP POLICY IF EXISTS "Allow professor read" ON professors;
+CREATE POLICY "Allow professor read" 
+  ON professors FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow professor insert" ON professors;
+CREATE POLICY "Allow professor insert" 
+  ON professors FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow professor update" ON professors;
+CREATE POLICY "Allow professor update" 
+  ON professors FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Allow professor delete" ON professors;
+CREATE POLICY "Allow professor delete" 
+  ON professors FOR DELETE USING (true);
+
 DROP POLICY IF EXISTS "Allow student read" ON students;
 CREATE POLICY "Allow student read" 
   ON students FOR SELECT USING (true);

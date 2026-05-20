@@ -12,24 +12,28 @@ export const authService = {
     if (authError) throw new Error(`Erro ao criar usuário: ${authError.message}`);
     if (!authData.user) throw new Error('Erro ao criar usuário');
 
+    // Small delay to ensure user is fully created in auth
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     // 2. Create professor record
+    const professorRecord = {
+      id: authData.user.id,
+      email: input.email,
+      name: input.name,
+      phone: input.phone || null,
+      specialty: input.specialty || null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
     const { data: professorData, error: professorError } = await supabase
       .from('professors')
-      .insert([
-        {
-          id: authData.user.id,
-          email: input.email,
-          name: input.name,
-          phone: input.phone || null,
-          specialty: input.specialty || null,
-        },
-      ])
+      .insert([professorRecord])
       .select()
       .single();
 
     if (professorError) {
-      // Rollback: delete auth user if professor creation fails
-      await supabase.auth.admin.deleteUser(authData.user.id).catch(() => {});
+      console.error('Professor creation error:', professorError);
       throw new Error(`Erro ao criar professor: ${professorError.message}`);
     }
 

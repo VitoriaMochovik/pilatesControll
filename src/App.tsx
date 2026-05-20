@@ -307,6 +307,18 @@ export const App: React.FC = () => {
                   </button>
                 </div>
 
+                {showPatientForm && (
+                  <PatientForm
+                    initialData={editingPatient || undefined}
+                    onSubmit={editingPatient ? handleUpdatePatient : handleAddPatient}
+                    isLoading={isLoading}
+                    onCancel={() => {
+                      setShowPatientForm(false);
+                      setEditingPatient(null);
+                    }}
+                  />
+                )}
+
                 <div className="bg-white rounded-lg shadow p-6">
                   <input
                     type="text"
